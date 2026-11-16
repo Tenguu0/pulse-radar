@@ -1,0 +1,161 @@
+/* Pulse Radar — dark sonar theme. No network, no frameworks, one palette. */
+:root {
+  --bg: #070d1a;
+  --panel: #0d1626;
+  --panel2: #111e33;
+  --line: #1e3355;
+  --ink: #dbe7f5;
+  --dim: #8ba3c2;
+  --cyan: #22d3ee;
+  --cyan-dim: #0e7490;
+  --amber: #fbbf24;
+  --green: #34d399;
+  --red: #f87171;
+  --radius: 10px;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+a { color: var(--cyan); }
+h1 { margin: 0; font-size: 44px; letter-spacing: 0.5px; }
+h2 { font-size: 22px; margin: 0 0 10px; }
+h3 { font-size: 16px; margin: 18px 0 6px; color: var(--cyan); }
+p { margin: 0 0 10px; }
+
+/* --- hero with a radar sweep --- */
+.hero { display: flex; gap: 28px; padding: 28px 24px 20px; border-bottom: 1px solid var(--line); }
+.sweep {
+  flex: 0 0 148px; width: 148px; height: 148px; border-radius: 50%;
+  border: 1px solid var(--line); position: relative; overflow: hidden;
+  background:
+    radial-gradient(circle, transparent 62%, rgba(34, 211, 238, 0.08) 63%, transparent 64%),
+    repeating-radial-gradient(circle, transparent 0 34px, rgba(30, 51, 85, 0.7) 34px 35px);
+}
+.sweep::before, .sweep::after {
+  content: ""; position: absolute; inset: 0; border-radius: 50%;
+  background: conic-gradient(from 0deg, rgba(34, 211, 238, 0.55), transparent 22%);
+  animation: spin 6s linear infinite;
+}
+.sweep::after { animation-duration: 11s; opacity: 0.35; }
+.sweep span {
+  position: absolute; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--amber); left: 62%; top: 30%;
+  box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.25), 0 0 12px var(--amber);
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.hero-text { max-width: 860px; }
+.kicker { color: var(--cyan); text-transform: uppercase; letter-spacing: 1.5px; font-size: 12px; margin-bottom: 4px; }
+.lede { color: var(--dim); max-width: 720px; }
+.lede em { color: var(--cyan); font-style: normal; }
+.stats { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.stats span {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 20px;
+  padding: 5px 12px; font-size: 13px; color: var(--dim);
+}
+.stats b { color: var(--ink); }
+
+/* --- top five pulse cards --- */
+.top5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; padding: 16px 24px 4px; }
+.topcard {
+  background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 12px; cursor: pointer; text-align: left; color: var(--ink); font: inherit;
+}
+.topcard:hover, .topcard:focus-visible { border-color: var(--cyan); outline: none; }
+.topcard .t-rank { display: block; color: var(--cyan); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+.topcard .t-name { display: block; font-weight: 700; font-size: 16px; margin: 2px 0 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.topcard .t-val { display: block; color: var(--dim); font-size: 13px; }
+.pulsebar { display: block; height: 6px; background: #0a1424; border-radius: 3px; overflow: hidden; margin-top: 8px; }
+.pulsebar i { display: block; height: 100%; background: linear-gradient(90deg, var(--cyan-dim), var(--cyan)); }
+.pulsebar.hot i { background: linear-gradient(90deg, var(--amber), #f59e0b); }
+
+/* --- tabs --- */
+.tabs { display: flex; gap: 6px; padding: 16px 24px 0; }
+.tabs button {
+  background: var(--panel); color: var(--dim); border: 1px solid var(--line);
+  border-radius: 20px; padding: 8px 18px; font: inherit; cursor: pointer;
+}
+.tabs button.on { background: var(--cyan); color: #04222b; border-color: var(--cyan); font-weight: 700; }
+.panel { padding: 16px 24px 28px; }
+
+/* --- controls --- */
+.controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; margin-bottom: 10px; }
+.controls label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.8px; }
+.controls input, .controls select {
+  background: var(--panel); color: var(--ink); border: 1px solid var(--line);
+  border-radius: 7px; padding: 8px 10px; font: 14px/1.3 system-ui, sans-serif; min-width: 150px;
+}
+.controls input[type="number"] { min-width: 120px; }
+.toggles { display: flex; gap: 6px; flex-wrap: wrap; }
+.toggles button {
+  background: var(--panel); color: var(--dim); border: 1px solid var(--line);
+  border-radius: 20px; padding: 8px 14px; font: 14px system-ui, sans-serif; cursor: pointer;
+}
+.toggles button[aria-pressed="true"] { background: var(--amber); color: #2a1c00; border-color: var(--amber); font-weight: 700; }
+.count { color: var(--dim); font-size: 13px; }
+.hint { color: var(--dim); font-size: 13px; margin-top: 10px; }
+.note { color: var(--dim); max-width: 780px; }
+.note strong { color: var(--ink); }
+
+/* --- tables --- */
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
+thead th { color: var(--dim); font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px; background: var(--panel2); }
+tbody tr { cursor: pointer; }
+tbody tr:hover { background: var(--panel2); }
+tbody tr.sel { background: #0e2a3d; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+td .sub { display: block; color: var(--dim); font-size: 12px; }
+.pill {
+  display: inline-block; font-size: 11px; font-weight: 700; border-radius: 10px; padding: 1px 8px;
+  background: rgba(34, 211, 238, 0.15); color: var(--cyan); margin-left: 6px; vertical-align: 1px;
+}
+.pill.launch { background: rgba(52, 211, 153, 0.15); color: var(--green); }
+.star { background: none; border: none; color: var(--dim); font-size: 17px; cursor: pointer; padding: 0 4px; }
+.star.on { color: var(--amber); }
+.up { color: var(--green); } .down { color: var(--red); }
+.mini-pulse { display: inline-block; width: 74px; height: 6px; background: #0a1424; border-radius: 3px; overflow: hidden; vertical-align: middle; margin-right: 8px; }
+.mini-pulse i { display: block; height: 100%; background: var(--cyan); }
+
+/* --- detail panel --- */
+.detail { margin-top: 18px; border: 1px solid var(--cyan-dim); border-radius: var(--radius); background: var(--panel); padding: 20px; }
+.detail h2 { font-size: 24px; }
+.detail .meta { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 14px; }
+.detail .meta span { background: var(--panel2); border: 1px solid var(--line); border-radius: 16px; padding: 4px 11px; font-size: 13px; color: var(--dim); }
+.detail .meta b { color: var(--ink); }
+.dialrow { display: flex; gap: 24px; flex-wrap: wrap; align-items: center; }
+.dial {
+  flex: 0 0 120px; width: 120px; height: 120px; border-radius: 50%; display: grid; place-items: center;
+  background: conic-gradient(var(--cyan) calc(var(--p) * 1%), #0a1424 0);
+}
+.dial b { background: var(--panel); width: 92px; height: 92px; border-radius: 50%; display: grid; place-items: center; font-size: 22px; }
+.factors { flex: 1; min-width: 280px; }
+.factor { display: grid; grid-template-columns: 96px 1fr 44px; gap: 10px; align-items: center; margin: 7px 0; font-size: 13px; }
+.factor .bar { height: 8px; background: #0a1424; border-radius: 4px; overflow: hidden; }
+.factor .bar i { display: block; height: 100%; background: var(--cyan); }
+.factor .bar i.risk { background: var(--amber); }
+.compare { margin-top: 16px; }
+.compare .factor { grid-template-columns: 150px 1fr 74px; }
+.compare .bar i.neg { background: var(--red); }
+.compare .bar i.pos { background: var(--green); }
+.farm { margin-top: 16px; }
+.farm ol { margin: 8px 0 0; padding-left: 22px; }
+.farm li { margin-bottom: 9px; }
+.detail .actions { margin-top: 14px; display: flex; gap: 8px; }
+.detail .actions button {
+  background: var(--panel2); color: var(--ink); border: 1px solid var(--line);
+  border-radius: 8px; padding: 8px 14px; font: 14px system-ui, sans-serif; cursor: pointer;
+}
+.detail .actions button:hover { border-color: var(--cyan); }
+.formula { background: var(--panel2); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; font-family: ui-monospace, monospace; font-size: 14px; }
+.judge-note { border-left: 3px solid var(--amber); padding-left: 12px; color: var(--dim); }
+footer { padding: 0 24px 28px; color: var(--dim); font-size: 13px; }
+
+@media (max-width: 900px) {
+  .top5 { grid-template-columns: repeat(2, 1fr); }
+  .hero { flex-direction: column; }
+  .sweep { flex-basis: 110px; width: 110px; height: 110px; }
+  h1 { font-size: 34px; }
+}

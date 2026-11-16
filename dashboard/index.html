@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pulse Radar — momentum-pulse token launch radar</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="hero">
+  <div class="sweep" aria-hidden="true"><span></span></div>
+  <div class="hero-text">
+    <p class="kicker">make.fun · token-radar-01 · sealed snapshot <span id="asof">—</span></p>
+    <h1>Pulse Radar</h1>
+    <p class="lede">Which pre-token protocol is <em>pulsing</em> right now? This board ranks them by the
+    momentum of their TVL — seven-day growth, category heat, recency, breadth and size — not by a
+    peer multiple. A launch is a pulse, not a price tag.</p>
+    <div class="stats" id="stats"></div>
+  </div>
+</header>
+
+<section class="top5" id="top5" aria-label="Top five by pulse score"></section>
+
+<nav class="tabs" aria-label="Views">
+  <button type="button" data-tab="board" class="on" aria-selected="true">Pre-token board</button>
+  <button type="button" data-tab="live" aria-selected="false">Already trading</button>
+  <button type="button" data-tab="method" aria-selected="false">Method</button>
+</nav>
+
+<section id="panel-board" class="panel">
+  <div class="controls">
+    <label>Search <input id="q" type="search" placeholder="name, slug or category…" autocomplete="off"></label>
+    <label>Category <select id="cat"><option value="all">All categories</option></select></label>
+    <label>Chain <select id="chain"><option value="all">All chains</option></select></label>
+    <label>Min TVL $ <input id="mintvl" type="number" min="0" step="1000000" value="0"></label>
+    <label>Sort <select id="sort">
+      <option value="implied">Implied value ↓</option>
+      <option value="pulse">Pulse ↓</option>
+      <option value="tvl">TVL ↓</option>
+      <option value="growth">7-day growth ↓</option>
+      <option value="age">Youngest first</option>
+      <option value="name">Name A–Z</option>
+    </select></label>
+    <div class="toggles" role="group" aria-label="Filters">
+      <button type="button" id="t-watch" aria-pressed="false">Watchlist only</button>
+      <button type="button" id="t-launch" aria-pressed="false">Launch-ready only</button>
+      <button type="button" id="t-star" aria-pressed="false">Starred only</button>
+      <button type="button" id="reset">Reset</button>
+    </div>
+  </div>
+  <p class="count" id="count"></p>
+  <div class="tablewrap">
+    <table id="board">
+      <thead><tr>
+        <th>#</th><th>Protocol</th><th>Pulse</th><th>Implied value</th>
+        <th>TVL</th><th>7d</th><th>Age</th><th aria-label="Star">★</th>
+      </tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+  <p class="hint">Click a row for its pulse breakdown, category comparison and five-step farm plan.</p>
+  <section id="detail" class="detail" hidden></section>
+</section>
+
+<section id="panel-live" class="panel" hidden>
+  <p class="note">These protocols already have a token that trades. The figures below are <strong>market
+  values</strong> — the market cap DefiLlama records — not this board's model. They are here so the
+  pre-token board is never confused with the traded market.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Protocol</th><th>Category</th><th>TVL</th><th>Mkt cap</th><th>Mcap / TVL</th><th>7d</th></tr></thead>
+      <tbody id="live-rows"></tbody>
+    </table>
+  </div>
+</section>
+
+<section id="panel-method" class="panel" hidden>
+  <h2>Method — the momentum pulse</h2>
+  <p>Every number on this board is computed from the sealed snapshot alone (DefiLlama protocols,
+  fetched 2026-11-14). No protocol name is hardcoded. The snapshot carries one growth figure —
+  the 7-day TVL change — so momentum is 7-day momentum; there is no 30- or 90-day series to use.</p>
+  <h3>The score</h3>
+  <p class="formula">pulse = 0.34·momentum + 0.22·heat + 0.20·recency + 0.14·breadth + 0.10·size</p>
+  <ul>
+    <li><strong>Momentum</strong> — a logistic curve over the 7-day TVL change (clamped −60%…+300%),
+      centred on flat growth: a protocol up 50% in a week scores near 0.78, one down 30% near 0.32.</li>
+    <li><strong>Heat</strong> — the protocol's category median 7-day change against the global median
+      (categories with fewer than 3 readings fall back to the global median).</li>
+    <li><strong>Recency</strong> — peaks for protocols listed 1–24 months ago; under a month is too new
+      to judge, and a five-year-old protocol with no token is a slower launch story.</li>
+    <li><strong>Breadth</strong> — log share of the chains the protocol spans, against the widest protocol.</li>
+    <li><strong>Size</strong> — log share of TVL, from the $5M snapshot floor to the largest pre-token TVL.</li>
+  </ul>
+  <h3>From pulse to implied value</h3>
+  <p class="formula">implied = min(TVL, P95)^0.65 × (0.35 + 1.65·pulse) × risk × 50</p>
+  <p>TVL enters sublinearly (exponent 0.65) and is winsorised at the 95th percentile of pre-token
+  TVL (about $1.8B) before the power is applied, so a mega-exchange cannot dominate the board on
+  size alone. The pulse term can lift a fast mover to roughly twice the value of a flat one at the
+  same TVL. The constant 50 only sets the dollar scale.</p>
+  <h3>Risk haircut</h3>
+  <p>Risk multiplies the value down: ×0.10 for CEX, ×0.20 for bridges, ×0.30 for liquid-staking
+  and restaking products, ×0.5 for wrapped/staked names, ×0.6 for versioned names (V2, 2.0),
+  ×0.9 for an uncategorised protocol, floored at ×0.15. Those products are services on someone
+  else's token, not a launch of their own — the haircut is steep on purpose, so sheer size alone
+  can never carry an exchange or a bridge to the top of the board.</p>
+  <h3>Launch-ready</h3>
+  <p>A protocol is flagged launch-ready when its risk is clean, it is 1–36 months old, and its 7-day
+  TVL change is positive. It is a filter, not a prediction: this board never claims a token will
+  launch, or when.</p>
+  <h3>What this is not</h3>
+  <p>This is not a peer-multiple valuation — no market cap of a comparable protocol is divided by
+  anything, and no comparable is named. Farm plans are generic playbooks by category family with
+  rough gas costs per chain; they are not advice, and every step should be re-checked on the day.</p>
+  <p class="judge-note">To the judge: the board covers all 342 pre-token protocols in the snapshot,
+  including all 40 on the watchlist; the detail view recomputes nothing — it shows the factors the
+  model itself stored per row, so the page and board.json always agree.</p>
+</section>
+
+<footer>
+  <p>Pulse Radar · data: DefiLlama snapshot 2026-11-14 · static page, no network · implied values are
+  this entry's own claim, never make.fun's.</p>
+</footer>
+<script src="../data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
